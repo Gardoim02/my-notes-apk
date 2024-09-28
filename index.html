@@ -4,14 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
-    <link rel="manifest" href="manifest.json">
+    <link rel="manifest" href="/manifest.json">
     <title>My Notes App</title>
 </head>
 <body>
-    <h1>My Notes</h1>
-    <textarea id="noteInput" placeholder="Write your note here..."></textarea>
-    <button id="saveNote">Save Note</button>
-    <button id="downloadNotes">Download Notes</button>
+    <h1>My Notes App</h1>
+    <div class="input-container">
+        <input type="text" id="noteSubject" placeholder="Enter note subject" />
+        <textarea id="noteInput" placeholder="Enter note content"></textarea>
+        <div class="button-container">
+            <button id="saveNote">Save Note</button>
+            <button id="downloadNotes" class="download-button">Download Notes</button>
+        </div>
+    </div>
+    
     <div id="notesList"></div>
     <script src="script.js"></script>
 </body>
