@@ -1,161 +1,93 @@
-body {
-    font-family: Arial, sans-serif;
-    padding: 20px;
-    background-color: #faebd7; /* Warm beige background */
-    color: #333; /* Darker text color for readability */
-}
+document.getElementById('saveNote').addEventListener('click', function() {
+    const noteSubject = document.getElementById('noteSubject').value;
+    const noteInput = document.getElementById('noteInput').value;
 
-h1 {
-    text-align: center; /* Center the header */
-    color: #8b4513; /* SaddleBrown for a warm color */
-}
+    // Get existing notes from local storage
+    let notes = JSON.parse(localStorage.getItem('notes')) || [];
+    if (noteSubject.trim() !== '' && noteInput.trim() !== '') {
+        const formattedSubject = noteSubject.charAt(0).toUpperCase() + noteSubject.slice(1);
+        notes.push({ subject: formattedSubject, content: noteInput });
+        localStorage.setItem('notes', JSON.stringify(notes));
 
-.input-container {
-    margin: 20px 0; /* Space around input elements */
-    display: flex;
-    flex-direction: column; /* Stack input elements vertically */
-    align-items: center; /* Center align all items */
-}
-
-#noteSubject, #noteInput {
-    width: 90%; /* Consistent width for inputs */
-    margin-bottom: 10px; /* Space below inputs */
-    padding: 10px; /* Padding for inner space */
-    border: 1px solid #ccc; /* Light grey border */
-    border-radius: 5px; /* Slightly rounded corners */
-    font-size: 16px; /* Increased font size */
-    background-color: #fff8dc; /* Warm off-white background for inputs */
-}
-
-.button-container {
-    display: flex; /* Flexbox for button layout */
-    justify-content: center; /* Center buttons */
-    gap: 10px; /* Space between buttons */
-}
-
-#saveNote, .download-button {
-    padding: 10px 15px; /* Padding for buttons */
-    cursor: pointer; /* Pointer cursor */
-    border: none; /* No border */
-    border-radius: 5px; /* Rounded corners */
-    background-color: #d2691e; /* Chocolate color for buttons */
-    color: white; /* White text */
-    font-size: 16px; /* Increased font size */
-    transition: background 0.3s ease; /* Smooth transition */
-}
-
-#saveNote:hover {
-    background-color: #a0522d; /* Darker chocolate color on hover */
-}
-
-.download-button {
-    background-color: #3cb371; /* Medium sea green background */
-}
-
-.download-button:hover {
-    background-color: #2e8b57; /* Darker green on hover */
-}
-
-#notesList {
-    margin-top: 20px; /* Space above notes */
-    display: flex; /* Use flexbox layout */
-    flex-direction: column; /* Stack notes vertically */
-    gap: 15px; /* Space between notes */
-}
-
-.note {
-    position: relative; /* Required for absolute positioning of the button container */
-    background-color: #fff; /* White background for notes */
-    border: 1px solid #ddd; /* Light grey border */
-    padding: 15px 15px 40px; /* Increased inner padding */
-    box-sizing: border-box; /* Includes padding in width/height */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Enhanced shadow for a 3D effect */
-    border-radius: 8px; /* Smoothly rounded corners */
-    transition: transform 0.2s, box-shadow 0.2s; /* Smooth transition */
-    width: 100%; /* Make the note take full width */
-}
-
-.note:hover {
-    transform: translateY(-2px); /* Lift effect */
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Stronger shadow on hover */
-}
-
-.note-header {
-    display: flex; /* Flexbox for header layout */
-    justify-content: space-between; /* Space between subject and buttons */
-    align-items: center; /* Center the items vertically */
-}
-
-.note h3 {
-    margin: 0; /* Remove margin for alignment */
-    color: #8b4513; /* SaddleBrown for subject */
-}
-
-.note p {
-    margin: 10px 0 0; /* Margin above and below content */
-    color: #555; /* Darker grey for body text */
-}
-
-/* Position buttons in the note-header */
-.note-buttons {
-    display: flex; /* Flexbox for button layout */
-    gap: 10px; /* Space between buttons */
-}
-
-.edit-button {
-    background-color: #007bff; /* Blue background for the pencil button */
-    border: none; /* No border */
-    color: white; /* White color for the 'Pencil' */
-    font-size: 20px; /* Size of the pencil icon */
-    padding: 5px 10px; /* Padding for the button */
-    border-radius: 5px; /* Rounded corners */
-    cursor: pointer; /* Pointer cursor */
-    transition: background 0.3s ease; /* Smooth transition */
-}
-
-.edit-button:hover {
-    background-color: #0056b3; /* Darker blue on hover */
-}
-
-.delete-button {
-    background: #d9534f; /* Danger color */
-    color: white; /* White color for the 'X' */
-    cursor: pointer; /* Pointer cursor */
-    font-size: 16px; /* Size of the 'X' */
-    width: 30px; /* Width of the square */
-    height: 30px; /* Height of the square */
-    display: flex; /* Use flexbox to center the 'X' */
-    justify-content: center; /* Center horizontally */
-    align-items: center; /* Center vertically */
-    border-radius: 50%; /* Make it a circle */
-    border: 2px solid #c9302c; /* Darker red for the border */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Slight shadow for depth */
-    transition: background 0.3s ease, transform 0.3s ease; /* Smooth transitions */
-}
-
-.delete-button:hover {
-    background: #c9302c; /* Darker red on hover */
-    transform: scale(1.1); /* Slightly enlarge on hover */
-}
-
-/* Media query for mobile screens remain the same */
-@media (max-width: 600px) {
-    #noteSubject, #noteInput {
-        width: 100%; /* Make both inputs full width */
+        // Clear inputs and focus back on Subject
+        document.getElementById('noteSubject').value = '';
+        document.getElementById('noteInput').value = '';
+        document.getElementById('noteSubject').focus();
+        
+        displayNotes();
     }
-    
-    #noteInput {
-        height: 80px; /* Adjust input height for mobile */
-    }
+});
 
-    #saveNote, .download-button {
-        width: auto; /* Use auto width for coziness on mobile */
-        margin: 5px 0; /* Space between buttons */
-    }
+function displayNotes() {
+    const notesList = document.getElementById('notesList');
+    const notes = JSON.parse(localStorage.getItem('notes')) || [];
 
-    /* Ensure notes are still displayed properly */
-    .note {
-        padding: 8px; /* Adjust padding for notes */
-        width: 100%; /* Ensure it takes full width on smaller screens */
+    notesList.innerHTML = notes.map((note, index) => `
+        <div class="note">
+            <div class="note-header"> <!-- Header for subject and buttons -->
+                <h3>${note.subject}</h3>
+                <div class="note-buttons"> <!-- Buttons in the header -->
+                    <button class="edit-button" onclick="editNote(${index})">✏️</button>
+                    <button class="delete-button" onclick="deleteNote(${index})">X</button>
+                </div>
+            </div>
+            <p>${note.content}</p>
+        </div>
+    `).join('');
+}
+
+
+function editNote(index) {
+    const notes = JSON.parse(localStorage.getItem('notes')) || [];
+    const note = notes[index];
+
+    // Populate the input fields with the note's current content
+    document.getElementById('noteSubject').value = note.subject;
+    document.getElementById('noteInput').value = note.content;
+
+    // Set an attribute to indicate we're editing
+    document.getElementById('saveNote').setAttribute('data-edit-index', index);
+}
+
+function deleteNote(index) {
+    let notes = JSON.parse(localStorage.getItem('notes')) || [];
+    notes.splice(index, 1);
+    localStorage.setItem('notes', JSON.stringify(notes));
+    displayNotes();
+}
+
+// Function to handle note saving (update if editing)
+function saveNote() {
+    const index = document.getElementById('saveNote').getAttribute('data-edit-index');
+    const noteSubject = document.getElementById('noteSubject').value;
+    const noteInput = document.getElementById('noteInput').value;
+
+    // Get existing notes from local storage
+    let notes = JSON.parse(localStorage.getItem('notes')) || [];
+    if (noteSubject.trim() !== '' && noteInput.trim() !== '') {
+        const formattedSubject = noteSubject.charAt(0).toUpperCase() + noteSubject.slice(1);
+        
+        if (index) {
+            // Update the existing note
+            notes[index] = { subject: formattedSubject, content: noteInput };
+            document.getElementById('saveNote').removeAttribute('data-edit-index'); // Clear the edit indicator
+        } else {
+            // Add a new note
+            notes.push({ subject: formattedSubject, content: noteInput });
+        }
+
+        localStorage.setItem('notes', JSON.stringify(notes));
+        displayNotes();
+        
+        // Clear inputs and focus back on Subject
+        document.getElementById('noteSubject').value = '';
+        document.getElementById('noteInput').value = '';
+        document.getElementById('noteSubject').focus();
     }
 }
+
+// Add event listener for the download button
+document.getElementById('downloadNotes').addEventListener('click', downloadNotes);
+
+// Initial call to display notes on page load
+displayNotes();
